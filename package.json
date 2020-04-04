@@ -9,7 +9,8 @@
   "gypfile": true,
   "scripts": {
     "build": "node-gyp rebuild",
-    "clean": "node-gyp clean"
+    "clean": "node-gyp clean",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
