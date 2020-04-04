@@ -6,7 +6,7 @@
         "sources": [
             "cppsrc/main.cpp",
 			"cppsrc/player.cpp",
-			"cppsrc/world.cpp"
+			
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"
