@@ -40,6 +40,7 @@ function draw(world) {
 
     context.globalAlpha = 1;
 
+    console.log(world);
     //draw players
     for (let i = 0; i < world.players.length; i++) {
         context.fillStyle = "#" + world.players[i].color;

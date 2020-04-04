@@ -48,7 +48,7 @@ Napi::Object World::step(Napi::Env env)
 	world.Set("width", Napi::Number::New(env, width));
 	world.Set("height", Napi::Number::New(env, height));
 	Napi::Array jsplayers = Napi::Array::New(env);
-	int increment = 0;
+	int increment = -1;
 	for (auto i : players)
 	{
 		increment++;
@@ -86,7 +86,7 @@ void World::accelPlayer(double x, double y, std::string id)
 
 void World::removePlayer(std::string id)
 {
-	auto increment = 0;
+	auto increment = -1;
 	for (auto i : players)
 	{
 		increment++;
