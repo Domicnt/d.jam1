@@ -5,7 +5,7 @@ server.listen(process.env.PORT || 80);
 app.use('', express.static(__dirname));
 const io = require('socket.io')(server);
 
-const addon = require('./build/Release/testaddon.node');
+const addon = require('testaddon.node');
 
 //connections' IDs
 let connections = [];

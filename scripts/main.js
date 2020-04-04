@@ -1,8 +1,8 @@
 //-------Server Stuff-------//
 
 //set up socket
-var socket = io.connect('http://localhost/');//connects to localhost
-//var socket = io.connect('https://.herokuapp.com');//connects to external server
+//var socket = io.connect('http://localhost/');//connects to localhost
+var socket = io.connect('https://.herokuapp.com');//connects to external server
 
 //client's ID
 let ID = 0;
