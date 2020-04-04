@@ -9,8 +9,18 @@ public:
 	//radius
 	double r;
 
+	//trail point positions
+	double trailX[20];
+	double trailY[20];
+
+	//score
+	int score;
+	
 	//identification string
 	std::string ID;
+
+	//color it's drawn as
+	std::string color;
 
 	//constructors
 	Player(std::string id);

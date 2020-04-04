@@ -34,32 +34,52 @@ function map(value, high1, high2) {
 
 function draw(world) {
     //clear screen
+    context.globalAlpha = 0.1;
     context.fillStyle = "#000";
     context.fillRect(0, 0, width, height);
-    context.fillStyle = "#FFF";
+
+    context.globalAlpha = 1;
 
     //draw players
     for (let i = 0; i < world.players.length; i++) {
+        context.fillStyle = "#" + world.players[i].color;
         context.beginPath();
         context.arc(map(world.players[i].x, world.width, width), map(world.players[i].y, world.height, height), map(world.players[i].r, world.width, width), 0, 2 * Math.PI);
         context.fill();
+        context.fillStyle = "#FFF";
+        context.font = "30px Arial";
+        context.fillText(world.players[i].score, map(world.players[i].x, world.width, width), map(world.players[i].y, world.height, height) - 2 * map(world.players[i].r, world.width, width));
     }
-
-    //border
-    context.beginPath();
-    context.rect(0, 0, width, height);
-    context.stroke();
 }
 
 //communication with server
 
 //send inputs to server
+let up = false;
+let left = false;
+let down = false;
+let right = false;
+
 window.addEventListener('keydown', event => {
-    if (event.key == 'w' || event.keyCode == 38) socket.emit('up');
-    if (event.key == 'a' || event.keyCode == 39) socket.emit('left');
-    if (event.key == 's' || event.keyCode == 40) socket.emit('down');
-    if (event.key == 'd' || event.keyCode == 41) socket.emit('right');
+    if (event.key == 'w' || event.keyCode == 38) up = true;
+    if (event.key == 'a' || event.keyCode == 42) left = true;
+    if (event.key == 's' || event.keyCode == 40) down = true;
+    if (event.key == 'd' || event.keyCode == 44) right = true;
 }, false);
+
+window.addEventListener('keyup', event => {
+    if (event.key == 'w' || event.keyCode == 38) up = false;
+    if (event.key == 'a' || event.keyCode == 42) left = false;
+    if (event.key == 's' || event.keyCode == 40) down = false;
+    if (event.key == 'd' || event.keyCode == 44) right = false;
+}, false);
+
+setInterval(function () {
+    if (up) socket.emit('up');
+    if (left) socket.emit('left');
+    if (down) socket.emit('down');
+    if (right) socket.emit('right');
+}, 40);
 
 //draw on recieving update from server
 socket.on('world', function (data) {

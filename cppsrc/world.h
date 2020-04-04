@@ -21,4 +21,6 @@ public:
 	void removePlayer(std::string id);
 	//collision with the edges
 	void edgeCollision();
+	//handles collisions between players
+	void playerCollision();
 };

@@ -29,16 +29,16 @@ io.on('connection', function (socket) {
 
     //when recieving inputs from this connection
     socket.on('up', function () {
-        addon.move(0, -1, ID);
+        addon.move(0, -.25, ID);
     });
     socket.on('left', function () {
-        addon.move(-1, 0, ID);
+        addon.move(-.25, 0, ID);
     });
     socket.on('down', function () {
-        addon.move(0, 1, ID);
+        addon.move(0, .25, ID);
     });
     socket.on('right', function () {
-        addon.move(1, 0, ID);
+        addon.move(.25, 0, ID);
     });
 
     //when this connection pings server
@@ -72,9 +72,9 @@ setInterval(function () {
     io.sockets.emit('ping');
 }, 60000);
 
-//perform one game step and update clients every 1/25 second
+//perform one game step and update clients every 1/50th of a second
 setInterval(function () {
     io.sockets.emit('world', addon.step());
-}, 40)
+}, 20)
 
 module.exports = addon;
