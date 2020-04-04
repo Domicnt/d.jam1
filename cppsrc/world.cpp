@@ -19,25 +19,25 @@ Napi::Object World::step(Napi::Env env)
 		//update trail positions
 		i.trailX[0] = i.x;
 		i.trailY[0] = i.y;
-		for(auto j = std::size(i.trailX) - 1; j > 0; j--)
+		for (auto j = 19; j > 0; j--)
 		{
 			i.trailX[j] = i.trailX[j - 1];
 			i.trailY[j] = i.trailY[j - 1];
 		}
 
 		//update score
-		for(auto j : players)
+		for (auto j : players)
 		{
 			if (i.ID == j.ID) continue;
-			for(auto k = 0; k < std::size(j.trailX); k++)
+			for (auto k = 0; k < 20; k++)
 			{
-				if(sqrt(pow(i.x - j.trailX[k], 2) + pow(i.y - j.trailY[k], 2)) < i.r * 2)
+				if (pow(i.x - j.trailX[k], 2) + pow(i.y - j.trailY[k], 2) < pow(i.r * 2, 2))
 				{
 					i.score++;
 				}
 			}
 		}
-		
+
 		//velocities
 		i.x += i.Vx;
 		i.y += i.Vy;
@@ -45,10 +45,10 @@ Napi::Object World::step(Napi::Env env)
 	playerCollision();
 	edgeCollision();
 	Napi::Object world = Napi::Object::New(env);
-	world.Set("width", Napi::Number::New( env, width));
+	world.Set("width", Napi::Number::New(env, width));
 	world.Set("height", Napi::Number::New(env, height));
 	Napi::Array jsplayers = Napi::Array::New(env);
-	for (auto i  = 0; i < std::size(players); i++)
+	for (auto i = 0; i < std::size(players); i++)
 	{
 		Napi::Object player = Napi::Object::New(env);;
 		player.Set("x", Napi::Number::New(env, players[i].x));
@@ -84,9 +84,9 @@ void World::accelPlayer(double x, double y, std::string id)
 
 void World::removePlayer(std::string id)
 {
-	for(auto i = 0; i < std::size(players); i++)
+	for (auto i = 0; i < std::size(players); i++)
 	{
-		if(players[i].ID == id)
+		if (players[i].ID == id)
 		{
 			players.erase(players.begin() + i);
 		}
@@ -118,41 +118,36 @@ void World::edgeCollision()
 			i.y = height - i.r;
 			i.Vy = -abs(i.Vy);
 		}
-		
+
 	}
 }
 
 void World::playerCollision()
 {
-	for (auto i = 0; i < std::size(players); i++)
+	for (auto& i : players)
 	{
-		for(auto j = i; j < std::size(players); j++)
+		for (auto& j : players)
 		{
-			if(sqrt(pow(players[i].x - players[j].x, 2) + pow(players[i].y - players[j].y, 2)) < players[i].r + players[j].r)
+			if (i.ID == j.ID) continue;
+			if (pow(i.x - j.x, 2) + pow(i.y - j.y, 2) < pow(i.r + j.r, 2))
 			{
 				//new velocities
-				auto const newVelX1 = (players[i].Vx * (3.14 * pow(players[i].r, 2) - 3.14 * pow(players[j].r, 2)) + (2 * 3.14 * pow(players[j].r, 2) * players[j].Vx)) / (3.14 * pow(players[i].r, 2) + 3.14 * pow(players[j].r, 2));
-				auto const newVelY1 = (players[i].Vy * (3.14 * pow(players[i].r, 2) - 3.14 * pow(players[j].r, 2)) + (2 * 3.14 * pow(players[j].r, 2) * players[j].Vy)) / (3.14 * pow(players[i].r, 2) + 3.14 * pow(players[j].r, 2));
-				auto const newVelX2 = (players[j].Vx * (3.14 * pow(players[j].r, 2) - 3.14 * pow(players[i].r, 2)) + (2 * 3.14 * pow(players[i].r, 2) * players[i].Vx)) / (3.14 * pow(players[i].r, 2) + 3.14 * pow(players[j].r, 2));
-				auto const newVelY2 = (players[j].Vy * (3.14 * pow(players[j].r, 2) - 3.14 * pow(players[i].r, 2)) + (2 * 3.14 * pow(players[i].r, 2) * players[i].Vy)) / (3.14 * pow(players[i].r, 2) + 3.14 * pow(players[j].r, 2));
+				auto const newVelX1 = (i.Vx * (3.14 * pow(i.r, 2) - 3.14 * pow(j.r, 2)) + (2 * 3.14 * pow(j.r, 2) * j.Vx)) / (3.14 * pow(i.r, 2) + 3.14 * pow(j.r, 2));
+				auto const newVelY1 = (i.Vy * (3.14 * pow(i.r, 2) - 3.14 * pow(j.r, 2)) + (2 * 3.14 * pow(j.r, 2) * j.Vy)) / (3.14 * pow(i.r, 2) + 3.14 * pow(j.r, 2));
+				auto const newVelX2 = (j.Vx * (3.14 * pow(j.r, 2) - 3.14 * pow(i.r, 2)) + (2 * 3.14 * pow(i.r, 2) * i.Vx)) / (3.14 * pow(i.r, 2) + 3.14 * pow(j.r, 2));
+				auto const newVelY2 = (j.Vy * (3.14 * pow(j.r, 2) - 3.14 * pow(i.r, 2)) + (2 * 3.14 * pow(i.r, 2) * i.Vy)) / (3.14 * pow(i.r, 2) + 3.14 * pow(j.r, 2));
 
 				//update velocities
-				players[i].Vx = newVelX1;
-				players[i].Vy = newVelY1;
-				players[j].Vx = newVelX2;
-				players[j].Vy = newVelY2;
-
-				//depth of collision
-				auto const depth = (players[i].r + players[j].r) - sqrt(pow(players[i].x - players[j].x, 2) + pow(players[i].y - players[j].y, 2));
-
-				//angle of collision
-				auto const angle1 = atan2(players[i].y - players[j].y, players[i].x - players[j].x);
+				i.Vx = newVelX1;
+				i.Vy = newVelY1;
+				j.Vx = newVelX2;
+				j.Vy = newVelY2;
 
 				//update positions
-				players[i].x += cos(angle1) * depth / 2;
-				players[i].y += sin(angle1) * depth / 2;
-				players[j].x -= cos(angle1) * depth / 2;
-				players[j].y -= sin(angle1) * depth / 2;
+				i.x += (i.x - j.x) / 2;
+				i.y += (i.y - j.y) / 2;
+				j.x += (j.x - i.x) / 2;
+				j.y += (j.y - i.y) / 2;
 			}
 		}
 	}
