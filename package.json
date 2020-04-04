@@ -8,7 +8,6 @@
   "main": "index.js",
   "gypfile": true,
   "scripts": {
-    "build": "node-gyp rebuild",
     "clean": "node-gyp clean"
   },
   "author": "",
