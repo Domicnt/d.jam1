@@ -31,7 +31,7 @@ Napi::Object World::step(Napi::Env env)
 			if (i.ID == j.ID) continue;
 			for (auto k = 0; k < 20; k++)
 			{
-				if (pow(i.x - j.trailX[k], 2) + pow(i.y - j.trailY[k], 2) < pow(i.r * 2, 2))
+				if ((i.x - j.trailX[k]) * (i.x - j.trailX[k]) + (i.y - j.trailY[k]) * (i.y - j.trailY[k]) < (i.r * 2) * (i.r * 2))
 				{
 					i.score++;
 				}
@@ -48,18 +48,20 @@ Napi::Object World::step(Napi::Env env)
 	world.Set("width", Napi::Number::New(env, width));
 	world.Set("height", Napi::Number::New(env, height));
 	Napi::Array jsplayers = Napi::Array::New(env);
-	for (auto i = 0; i < std::size(players); i++)
+	int increment = 0;
+	for (auto i : players)
 	{
+		increment++;
 		Napi::Object player = Napi::Object::New(env);;
-		player.Set("x", Napi::Number::New(env, players[i].x));
-		player.Set("y", Napi::Number::New(env, players[i].y));
-		player.Set("Vx", Napi::Number::New(env, players[i].Vx));
-		player.Set("Vy", Napi::Number::New(env, players[i].Vy));
-		player.Set("r", Napi::Number::New(env, players[i].r));
-		player.Set("color", Napi::String::New(env, players[i].color));
-		player.Set("score", Napi::Number::New(env, players[i].score));
+		player.Set("x", Napi::Number::New(env, i.x));
+		player.Set("y", Napi::Number::New(env, i.y));
+		player.Set("Vx", Napi::Number::New(env, i.Vx));
+		player.Set("Vy", Napi::Number::New(env, i.Vy));
+		player.Set("r", Napi::Number::New(env, i.r));
+		player.Set("color", Napi::String::New(env, i.color));
+		player.Set("score", Napi::Number::New(env, i.score));
 
-		jsplayers.Set(i, player);
+		jsplayers.Set(increment, player);
 	}
 	world.Set("players", jsplayers);
 	return world;
@@ -72,23 +74,26 @@ void World::addPlayer(std::string id)
 
 void World::accelPlayer(double x, double y, std::string id)
 {
-	for (auto i = 0; i < std::size(players); i++)
+	for (auto &i : players)
 	{
-		if (players[i].ID == id)
+		if (i.ID == id)
 		{
-			players[i].Vx += x;
-			players[i].Vy += y;
+			i.Vx += x;
+			i.Vy += y;
 		}
 	}
 }
 
 void World::removePlayer(std::string id)
 {
-	for (auto i = 0; i < std::size(players); i++)
+	auto increment = 0;
+	for (auto i : players)
 	{
-		if (players[i].ID == id)
+		increment++;
+		if (i.ID == id)
 		{
-			players.erase(players.begin() + i);
+			players.erase(players.begin() + increment);
+			break;
 		}
 	}
 }
@@ -129,13 +134,13 @@ void World::playerCollision()
 		for (auto& j : players)
 		{
 			if (i.ID == j.ID) continue;
-			if (pow(i.x - j.x, 2) + pow(i.y - j.y, 2) < pow(i.r + j.r, 2))
+			if ((i.x - j.x) * (i.x - j.x) + (i.y - j.y) * (i.y - j.y) < (i.r + j.r) * (i.r + j.r))
 			{
 				//new velocities
-				auto const newVelX1 = (i.Vx * (3.14 * pow(i.r, 2) - 3.14 * pow(j.r, 2)) + (2 * 3.14 * pow(j.r, 2) * j.Vx)) / (3.14 * pow(i.r, 2) + 3.14 * pow(j.r, 2));
-				auto const newVelY1 = (i.Vy * (3.14 * pow(i.r, 2) - 3.14 * pow(j.r, 2)) + (2 * 3.14 * pow(j.r, 2) * j.Vy)) / (3.14 * pow(i.r, 2) + 3.14 * pow(j.r, 2));
-				auto const newVelX2 = (j.Vx * (3.14 * pow(j.r, 2) - 3.14 * pow(i.r, 2)) + (2 * 3.14 * pow(i.r, 2) * i.Vx)) / (3.14 * pow(i.r, 2) + 3.14 * pow(j.r, 2));
-				auto const newVelY2 = (j.Vy * (3.14 * pow(j.r, 2) - 3.14 * pow(i.r, 2)) + (2 * 3.14 * pow(i.r, 2) * i.Vy)) / (3.14 * pow(i.r, 2) + 3.14 * pow(j.r, 2));
+				auto const newVelX1 = (i.Vx * (3.14 * (i.r * i.r) - 3.14 * (j.r * j.r)) + (2 * 3.14 * (j.r * j.r) * j.Vx)) / (3.14 * (i.r * i.r) + 3.14 * (j.r * j.r));
+				auto const newVelY1 = (i.Vy * (3.14 * (i.r * i.r) - 3.14 * (j.r * j.r)) + (2 * 3.14 * (j.r * j.r) * j.Vy)) / (3.14 * (i.r * i.r) + 3.14 * (j.r * j.r));
+				auto const newVelX2 = (j.Vx * (3.14 * (j.r * j.r) - 3.14 * (i.r * i.r)) + (2 * 3.14 * (j.r * j.r) * i.Vx)) / (3.14 * (i.r * i.r) + 3.14 * (j.r * j.r));
+				auto const newVelY2 = (j.Vy * (3.14 * (j.r * j.r) - 3.14 * (i.r * i.r)) + (2 * 3.14 * (j.r * j.r) * i.Vy)) / (3.14 * (i.r * i.r) + 3.14 * (j.r * j.r));
 
 				//update velocities
 				i.Vx = newVelX1;
