@@ -9,7 +9,7 @@ Player::Player(std::string id)
 
 	r = 10;
 
-	for (auto i = 0; i < std::size(trailX); i++)
+	for (auto i = 0; i < 20; i++)
 	{
 		trailX[i] = 0;
 		trailY[i] = 0;
@@ -36,7 +36,7 @@ Player::Player(double x1, double y1, double Vx1, double Vy1, std::string id)
 
 	r = 10;
 
-	for (auto i = 0; i < std::size(trailX); i++)
+	for (auto i = 0; i < 20; i++)
 	{
 		trailX[i] = 0;
 		trailY[i] = 0;
