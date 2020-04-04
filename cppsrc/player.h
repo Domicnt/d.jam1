@@ -23,6 +23,6 @@ public:
 	std::string color;
 
 	//constructors
-	Player(std::string id);
-	Player(double x1, double y1, double Vx1, double Vy1, std::string id);
+	Player(std::string id, int width, int height);
+	Player(double x1, double y1, double Vx1, double Vy1, std::string id, int width, int height);
 };

@@ -6,6 +6,7 @@ class World
 {
 	std::vector<Player> players;
 	int width, height;
+	int goalHeight;
 public:
 	//constructor
 	World() = default;

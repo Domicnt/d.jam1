@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-Player::Player(std::string id)
+Player::Player(std::string id, int width, int height)
 {
-	x = 0;
-	y = 0;
+	x = rand() % width + 1;
+	y = rand() % height + 1;
 	Vx = 0;
 	Vy = 0;
 
@@ -20,17 +20,16 @@ Player::Player(std::string id)
 	ID = id;
 
 	std::string values = "6789abcdef";
-	srand(time(nullptr));
 	for(auto i = 0; i < 3; i++)
 	{
 		color += values.at(rand() % 10);
 	}
 }
 
-Player::Player(double x1, double y1, double Vx1, double Vy1, std::string id)
+Player::Player(double x1, double y1, double Vx1, double Vy1, std::string id, int width, int height)
 {
-	x = x1;
-	y = y1;
+	x = rand() % width + 1;
+	y = rand() % height + 1;
 	Vx = Vx1;
 	Vy = Vy1;
 

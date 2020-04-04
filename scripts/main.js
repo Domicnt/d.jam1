@@ -34,23 +34,27 @@ function map(value, high1, high2) {
 
 function draw(world) {
     //clear screen
-    context.globalAlpha = 0.1;
     context.fillStyle = "#000";
     context.fillRect(0, 0, width, height);
 
-    context.globalAlpha = 1;
-
-    console.log(world);
     //draw players
     for (let i = 0; i < world.players.length; i++) {
         context.fillStyle = "#" + world.players[i].color;
-        context.beginPath();
-        context.arc(map(world.players[i].x, world.width, width), map(world.players[i].y, world.height, height), map(world.players[i].r, world.width, width), 0, 2 * Math.PI);
-        context.fill();
+        for (let j = world.players[i].trailX.length; j >= 0; j--) {
+            context.globalAlpha = map(world.players[i].trailX.length - j, world.players[i].trailX.length, 1);
+            context.beginPath();
+            context.arc(map(world.players[i].trailX[j], world.width, width), map(world.players[i].trailY[j], world.height, height), map(world.players[i].r, world.width, width), 0, 2 * Math.PI);
+            context.fill();
+        }
         context.fillStyle = "#FFF";
         context.font = "30px Arial";
-        context.fillText(world.players[i].score, map(world.players[i].x, world.width, width), map(world.players[i].y, world.height, height) - 2 * map(world.players[i].r, world.width, width));
+        context.fillText(world.players[i].score, map(world.players[i].x, world.width, width), map(world.players[i].y, world.height, height) - map(world.players[i].r, world.width, width) - 20);
     }
+
+    //draw goals
+    context.fillStyle = "#F55";//red
+    context.fillRect(0, height / 2 - map(world.goalHeight, world.height, height) / 2, 3, map(world.goalHeight, world.height, height));
+    context.fillRect(width - 3, height / 2 - map(world.goalHeight, world.height, height) / 2, 3, map(world.goalHeight, world.height, height));
 }
 
 //communication with server
